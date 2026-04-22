@@ -1,37 +1,35 @@
-name: Build Android APK
+name: Flutter Android Build
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
 
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: 17
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'  # apna version daalo
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
+      - name: Flutter pub get
+        run: flutter pub get
 
-    - name: Install Gradle
-      uses: gradle/actions/setup-gradle@v3
+      - name: Create local.properties   # ← yeh step zaroori hai
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > android/local.properties
+          echo "flutter.sdk=$FLUTTER_ROOT" >> android/local.properties
 
-    - name: Build APK
-      run: gradle assembleDebug
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-debug-apk
-        path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Build APK
+        working-directory: android
+        run: gradle assembleDebug
