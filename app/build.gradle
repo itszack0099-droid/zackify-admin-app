@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace "com.example.yourapp"  // ← apna package name yahan daalo
+    namespace "com.zackify.admin"  // ← apna package name yahan daalo
     compileSdk 34
     ndkVersion flutter.ndkVersion
 
